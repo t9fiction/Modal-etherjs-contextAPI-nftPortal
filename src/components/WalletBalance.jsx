@@ -2,11 +2,11 @@ import {GlobalStore} from '../context/GlobalState'
 import Button from '@mui/material/Button';
 
 function WalletBalance() {
-    const { balance, getBalance, currentAccount } = GlobalStore();
+    const { accBalance, getBalance, currentAccount } = GlobalStore();
     return (
         <div>
             <Button onClick={() => getBalance()} >Show My Balance</Button>
-            {balance && <> {currentAccount} : {balance}</>}
+            {accBalance && currentAccount && (<> {currentAccount} : {accBalance}</>)}
         </div>
     );
 };

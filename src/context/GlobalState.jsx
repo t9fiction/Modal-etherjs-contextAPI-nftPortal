@@ -52,9 +52,9 @@ export const GlobalContext = createContext();
 export const GlobalProvider = ({ children }) => {
 
     const [totalMinted, setTotalMinted] = useState(0);
-    const [balance, setBalance] = useState();
     const [currentAccount, setCurrentAccount] = useState("");
     // const [contract, setContract] = useState()
+    const [accBalance, setAccBalance] = useState()
     const [web3Modal, setWeb3Modal] = useState(null)
 
     const providerOptions = {
@@ -128,15 +128,23 @@ export const GlobalProvider = ({ children }) => {
         // const provider = new ethers.providers.Web3Provider(window.ethereum);
         const provider = await web3Modal.connect();
         const ethersProvider = new ethers.providers.Web3Provider(provider)
+        console.log(ethersProvider)
+        console.log(ethersProvider.getSigner())
+        // console.log(ethersProvider.network.chainId)
         const signer = ethersProvider.getSigner();
-        setCurrentAccount(signer.getAddress())
-        const accountBalance = (await (signer.getBalance()))
-        const formattedEther = ethers.utils.formatUnits(accountBalance, 18)
-        console.log(formattedEther)
-        setBalance(parseEther(formattedEther));
+        const acc = await signer.getAddress()
+        console.log("acc",acc)
+        setCurrentAccount(acc)
+        const accountBalance = await signer.getBalance()
+        const balance = ethers.utils.formatUnits(accountBalance, 18)
+        console.log(balance)
+        setAccBalance(balance)
+        // setBalance(parseEther(formattedEther));
         // setBalance(ethers.utils.formatEther(accountBalance));
-        // return balance
+        return balance
     };
+
+
 
     useEffect(() => {
         const modalRun = async () => {
@@ -154,8 +162,6 @@ export const GlobalProvider = ({ children }) => {
                 console.log(contract)
                 const count = await contract?.totalSupply();
                 // await count.wait();
-                console.log(count)
-                console.log(parseInt(count));
                 setTotalMinted(parseInt(count));
             }
         }
@@ -164,7 +170,7 @@ export const GlobalProvider = ({ children }) => {
 
     return (
         <GlobalContext.Provider value={{
-            totalMinted, balance, currentAccount, getBalance, mintToken, getURI, getModalConnect
+            totalMinted, currentAccount, getBalance, mintToken, getURI, getModalConnect, accBalance
         }} >
             {children}
         </GlobalContext.Provider>
