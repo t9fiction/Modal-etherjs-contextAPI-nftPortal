@@ -5,6 +5,7 @@ import Web3Modal from "web3modal";
 import WalletConnectProvider from '@walletconnect/web3-provider'
 import Swal from 'sweetalert2';
 import { ethers } from 'ethers';
+import { formatEther, parseEther } from "ethers/lib/utils";
 
 const contractAddress = '0x1Dd0D5cd7577E4C26B6F30CbC662D66a2F92A979'
 
@@ -106,7 +107,7 @@ export const GlobalProvider = ({ children }) => {
         console.log("uri", uri.toString())
         Swal.fire(uri.toString());
     }
-    
+
     const mintToken = async () => {
         const contract = await getContract();
         // const connection = contract.connect(signer);
@@ -129,10 +130,12 @@ export const GlobalProvider = ({ children }) => {
         const ethersProvider = new ethers.providers.Web3Provider(provider)
         const signer = ethersProvider.getSigner();
         setCurrentAccount(signer.getAddress())
-        const accountBalance = signer.getBalance
-        // const accountBalance = await provider?.getBalance(account);
-        setBalance(ethers.utils.formatEther(accountBalance));
-        return accountBalance
+        const accountBalance = (await (signer.getBalance()))
+        const formattedEther = ethers.utils.formatUnits(accountBalance, 18)
+        console.log(formattedEther)
+        setBalance(parseEther(formattedEther));
+        // setBalance(ethers.utils.formatEther(accountBalance));
+        // return balance
     };
 
     useEffect(() => {
